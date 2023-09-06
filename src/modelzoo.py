@@ -1,9 +1,9 @@
 from escnn import gspaces
 
-from src.e2resnet import E2ResNet, E2BasicBlock
+from src.e2resnet import E2BasicBlock, E2ResNet
 
 
-def c1resnet18(num_classes: int=1000, base_width: int=80):
+def c1resnet18(num_classes: int = 1000, base_width: int = 80):
     return E2ResNet(
         gspaces.trivialOnR2(),
         block=E2BasicBlock,
@@ -13,7 +13,7 @@ def c1resnet18(num_classes: int=1000, base_width: int=80):
     )
 
 
-def d1resnet18(num_classes: int=1000, base_width: int=54):
+def d1resnet18(num_classes: int = 1000, base_width: int = 54):
     return E2ResNet(
         gspaces.flip2dOnR2(),
         block=E2BasicBlock,
@@ -23,7 +23,7 @@ def d1resnet18(num_classes: int=1000, base_width: int=54):
     )
 
 
-def c4resnet18(num_classes: int=1000, base_width: int=40):
+def c4resnet18(num_classes: int = 1000, base_width: int = 40):
     return E2ResNet(
         gspaces.rot2dOnR2(N=4),
         block=E2BasicBlock,
@@ -33,7 +33,7 @@ def c4resnet18(num_classes: int=1000, base_width: int=40):
     )
 
 
-def d4resnet18(num_classes: int=1000, base_width: int=28):
+def d4resnet18(num_classes: int = 1000, base_width: int = 28):
     return E2ResNet(
         gspaces.flipRot2dOnR2(N=4),
         block=E2BasicBlock,
@@ -43,5 +43,5 @@ def d4resnet18(num_classes: int=1000, base_width: int=28):
     )
 
 
-def create_model(model_name, num_classes: int=1000):
+def create_model(model_name, num_classes: int = 1000):
     return eval(model_name)(num_classes=num_classes)

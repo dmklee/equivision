@@ -1,20 +1,23 @@
-from typing import Type, Union, List, Callable, Optional
+from typing import Callable, List, Optional, Type, Union
+
 import torch
-from torch import Tensor
-from escnn import nn, gspaces
+from escnn import gspaces, nn
 from escnn.nn import GeometricTensor
+from torch import Tensor
 
 
 class E2BasicBlock(torch.nn.Module):
     expansion: int = 1
-    def __init__(self,
-                 gspace: gspaces.GSpace2D,
-                 inplanes: int,
-                 planes: int,
-                 stride: int,
-                 downsample: Optional[Callable] = None,
-                 norm_layer: Optional[Callable] = nn.InnerBatchNorm,
-                ):
+
+    def __init__(
+        self,
+        gspace: gspaces.GSpace2D,
+        inplanes: int,
+        planes: int,
+        stride: int,
+        downsample: Optional[Callable] = None,
+        norm_layer: Optional[Callable] = nn.InnerBatchNorm,
+    ):
         super().__init__()
         in_type = nn.FieldType(gspace, inplanes * [gspace.regular_repr])
         out_type = nn.FieldType(gspace, planes * [gspace.regular_repr])
@@ -49,6 +52,7 @@ class E2BasicBlock(torch.nn.Module):
 
 class E2BottleNeck(torch.nn.Module):
     expansion: int = 4
+
     def __init__(
         self,
         gspace: gspaces.GSpace2D,
@@ -67,7 +71,12 @@ class E2BottleNeck(torch.nn.Module):
         self.relu1 = nn.ReLU(out_type, True)
 
         self.conv2 = nn.R2Conv(
-            out_type, out_type, kernel_size=3, stride=stride, padding=1, bias=False,
+            out_type,
+            out_type,
+            kernel_size=3,
+            stride=stride,
+            padding=1,
+            bias=False,
         )
         self.bn2 = norm_layer(out_type)
         self.relu2 = nn.ReLU(out_type, True)
@@ -129,17 +138,23 @@ class E2ResNet(torch.nn.Module):
             bias=False,
         )
         self.bn1 = self.norm_layer(out_type)
-        self.maxpool = nn.PointwiseMaxPool(
-            out_type, kernel_size=3, stride=2, padding=1
-        )
+        self.maxpool = nn.PointwiseMaxPool(out_type, kernel_size=3, stride=2, padding=1)
 
         self.relu1 = nn.ReLU(out_type, True)
         self.layer1 = self._make_layer(gspace, block, base_width, layers[0])
-        self.layer2 = self._make_layer(gspace, block, base_width * 2, layers[1], stride=2)
-        self.layer3 = self._make_layer(gspace, block, base_width * 4, layers[2], stride=2)
-        self.layer4 = self._make_layer(gspace, block, base_width * 8, layers[3], stride=2)
+        self.layer2 = self._make_layer(
+            gspace, block, base_width * 2, layers[1], stride=2
+        )
+        self.layer3 = self._make_layer(
+            gspace, block, base_width * 4, layers[2], stride=2
+        )
+        self.layer4 = self._make_layer(
+            gspace, block, base_width * 8, layers[3], stride=2
+        )
 
-        out_type = nn.FieldType(gspace, block.expansion * base_width * 8 * [gspace.regular_repr])
+        out_type = nn.FieldType(
+            gspace, block.expansion * base_width * 8 * [gspace.regular_repr]
+        )
         self.avgpool = nn.PointwiseAdaptiveAvgPool(out_type, (1, 1))
 
         self.gpool = nn.GroupPooling(out_type)
@@ -165,9 +180,7 @@ class E2ResNet(torch.nn.Module):
 
         layers = []
         layers.append(
-            block(
-                gspace, self.inplanes, planes, stride, downsample, self.norm_layer
-            )
+            block(gspace, self.inplanes, planes, stride, downsample, self.norm_layer)
         )
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
@@ -190,7 +203,6 @@ class E2ResNet(torch.nn.Module):
         x = self.layer4(x)
 
         return x
-
 
     def forward(self, x: Tensor) -> Tensor:
         x = self.forward_features(x)
