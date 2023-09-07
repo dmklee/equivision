@@ -1,3 +1,4 @@
+import torchvision.models
 from escnn import gspaces
 
 from src.e2resnet import E2BasicBlock, E2ResNet
@@ -41,6 +42,11 @@ def d4resnet18(num_classes: int = 1000, base_width: int = 28):
         num_classes=num_classes,
         base_width=54,
     )
+
+
+# traditional models
+def resnet18(num_classes: int = 1000):
+    return torchvision.models.resnet18(weights=None)
 
 
 def create_model(model_name, num_classes: int = 1000):
