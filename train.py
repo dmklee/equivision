@@ -9,7 +9,7 @@ from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint, Ti
 from lightning.pytorch.loggers import WandbLogger
 from torch import Tensor, nn
 from torch.utils.data import DataLoader, default_collate
-from torchvision.datasets import FakeData, ImageFolder
+from torchvision.datasets import FakeData, ImageNet
 from torchvision.transforms import v2
 
 from src.modelzoo import create_model
@@ -51,16 +51,16 @@ class ImageNetDataModule(L.LightningDataModule):
         )
 
     def setup(self, stage: str) -> None:
-        self.train_set = FakeData(num_classes=NUM_CLASSES, transform=self.train_tfms)
-        self.test_set = FakeData(num_classes=NUM_CLASSES, transform=self.test_tfms)
-        # self.train_set = ImageFolder(
-        # str(self.data_dir / "train"),
-        # transform=self.train_tfms,
-        # )
-        # self.test_set = ImageFolder(
-        # str(self.data_dir / "val"),
-        # transform=self.test_tfms,
-        # )
+        # self.train_set = FakeData(num_classes=NUM_CLASSES, transform=self.train_tfms)
+        # self.test_set = FakeData(num_classes=NUM_CLASSES, transform=self.test_tfms)
+        self.train_set = ImageNet(
+            str(self.data_dir / "train"),
+            transform=self.train_tfms,
+        )
+        self.test_set = ImageNet(
+            str(self.data_dir / "val"),
+            transform=self.test_tfms,
+        )
 
     def train_dataloader(self) -> None:
         cutmix = v2.CutMix(num_classes=NUM_CLASSES)

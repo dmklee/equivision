@@ -12,6 +12,7 @@
 
 cd /work/helpinghandslab/klee.d/development/equi-vision-models
 
+module load python/3.8.1
 module load cuda/11.8
 
 source venv/bin/activate

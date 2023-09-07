@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # default arguments
-data_dir=/work/helpinghandslab/klee.d/datasets
-batch_size=32
-model=c1resnet18
+data_dir=/work/helpinghandslab/klee.d/datasets/imagenet
+precision=bf16-mixed
 seed=0
 
 run_with_checkpointing()
@@ -12,6 +11,9 @@ run_with_checkpointing()
     --model=${model}
     --data_dir=${data_dir}
     --batch_size=${batch_size}
+    --devices=1
+    --precision=bf16-mixed
+    --num_workers=10
     --seed=${seed}
     "
 
@@ -26,7 +28,7 @@ run_with_checkpointing()
 SEEDS=( 0 )
 for seed in "${SEEDS[@]}"
 do
+	batch_size=256
+	model=c1resnet18
     run_with_checkpointing
 done
-
-
