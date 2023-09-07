@@ -1,15 +1,14 @@
 import argparse
-import datetime
 from pathlib import Path
 from typing import List, Tuple
 
 import lightning as L
 import torch
-from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint, Timer
+from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
 from torch import Tensor, nn
 from torch.utils.data import DataLoader, default_collate
-from torchvision.datasets import FakeData, ImageNet
+from torchvision.datasets import ImageFolder
 from torchvision.transforms import v2
 
 from src.modelzoo import create_model
@@ -53,11 +52,11 @@ class ImageNetDataModule(L.LightningDataModule):
     def setup(self, stage: str) -> None:
         # self.train_set = FakeData(num_classes=NUM_CLASSES, transform=self.train_tfms)
         # self.test_set = FakeData(num_classes=NUM_CLASSES, transform=self.test_tfms)
-        self.train_set = ImageNet(
+        self.train_set = ImageFolder(
             str(self.data_dir / "train"),
             transform=self.train_tfms,
         )
-        self.test_set = ImageNet(
+        self.test_set = ImageFolder(
             str(self.data_dir / "val"),
             transform=self.test_tfms,
         )
@@ -153,6 +152,7 @@ def main(hparams):
         devices=hparams.devices,
         precision=hparams.precision,
         strategy="ddp",
+        max_epochs=hparams.max_epochs,
         gradient_clip_val=hparams.gradient_clip_val,
         accumulate_grad_batches=hparams.accumulate_grad_batches,
         logger=WandbLogger(
