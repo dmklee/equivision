@@ -30,7 +30,7 @@ def c4resnet18(num_classes: int = 1000, base_width: int = 40):
         block=E2BasicBlock,
         layers=[2, 2, 2, 2],
         num_classes=num_classes,
-        base_width=54,
+        base_width=base_width,
     )
 
 
@@ -40,7 +40,7 @@ def d4resnet18(num_classes: int = 1000, base_width: int = 28):
         block=E2BasicBlock,
         layers=[2, 2, 2, 2],
         num_classes=num_classes,
-        base_width=54,
+        base_width=base_width,
     )
 
 
