@@ -183,7 +183,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, default="./")
     parser.add_argument("--model", type=str, default="c1resnet18")
-    parser.add_argument("--devices", type=int, default=1)
+    parser.add_argument("--devices", nargs="+", type=int, default=[0])
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--precision", type=str, default="bf16-mixed")
     parser.add_argument("--batch_size", type=int, default=128)
