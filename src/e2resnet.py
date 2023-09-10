@@ -2,8 +2,71 @@ from typing import Callable, List, Optional, Type, Union
 
 import torch
 from escnn import gspaces, nn
-from escnn.nn import GeometricTensor
+from escnn.nn import FieldType, GeometricTensor
 from torch import Tensor
+
+
+def conv7x7(
+    in_type: FieldType,
+    out_type: FieldType,
+    stride=1,
+    padding=3,
+    dilation=1,
+    bias=False,
+    initialize=True,
+):
+    return nn.R2Conv(
+        in_type,
+        out_type,
+        7,
+        stride=stride,
+        padding=padding,
+        dilation=dilation,
+        bias=bias,
+        initialize=initialize,
+    )
+
+
+def conv3x3(
+    in_type: FieldType,
+    out_type: FieldType,
+    stride=1,
+    padding=1,
+    dilation=1,
+    bias=False,
+    initialize=True,
+):
+    return nn.R2Conv(
+        in_type,
+        out_type,
+        3,
+        stride=stride,
+        padding=padding,
+        dilation=dilation,
+        bias=bias,
+        initialize=initialize,
+    )
+
+
+def conv1x1(
+    in_type: FieldType,
+    out_type: FieldType,
+    stride=1,
+    padding=0,
+    dilation=1,
+    bias=False,
+    initialize=True,
+):
+    return nn.R2Conv(
+        in_type,
+        out_type,
+        1,
+        stride=stride,
+        padding=padding,
+        dilation=dilation,
+        bias=bias,
+        initialize=initialize,
+    )
 
 
 class E2BasicBlock(torch.nn.Module):
@@ -17,17 +80,16 @@ class E2BasicBlock(torch.nn.Module):
         stride: int,
         downsample: Optional[Callable] = None,
         norm_layer: Optional[Callable] = nn.InnerBatchNorm,
+        initialize: bool = True,
     ):
         super().__init__()
         in_type = nn.FieldType(gspace, inplanes * [gspace.regular_repr])
         out_type = nn.FieldType(gspace, planes * [gspace.regular_repr])
 
-        self.conv1 = nn.R2Conv(
-            in_type, out_type, 3, padding=1, stride=stride, bias=False
-        )
+        self.conv1 = conv3x3(in_type, out_type, stride=stride, initialize=initialize)
         self.bn1 = norm_layer(out_type)
         self.relu = nn.ReLU(out_type, True)
-        self.conv2 = nn.R2Conv(out_type, out_type, 3, padding=1, stride=1, bias=False)
+        self.conv2 = conv3x3(out_type, out_type, stride=1, initialize=initialize)
         self.bn2 = norm_layer(out_type)
         self.downsample = downsample
 
@@ -61,27 +123,22 @@ class E2BottleNeck(torch.nn.Module):
         stride: int,
         downsample: Optional[Callable] = None,
         norm_layer: Optional[Callable] = nn.InnerBatchNorm,
+        initialize: bool = True,
     ):
-        in_type = nn.FieldType(gspace, inplanes * [gspace.regular_repr])
-        out_type = nn.FieldType(gspace, planes * [gspace.regular_repr])
-        exp_type = nn.FieldType(gspace, self.expansion * planes * [gspace.regular_repr])
+        super().__init__()
+        in_type = FieldType(gspace, inplanes * [gspace.regular_repr])
+        out_type = FieldType(gspace, planes * [gspace.regular_repr])
+        exp_type = FieldType(gspace, self.expansion * planes * [gspace.regular_repr])
 
-        self.conv1 = nn.R2Conv(in_type, out_type, kernel_size=1, bias=False)
+        self.conv1 = conv1x1(in_type, out_type, initialize=initialize)
         self.bn1 = norm_layer(out_type)
         self.relu1 = nn.ReLU(out_type, True)
 
-        self.conv2 = nn.R2Conv(
-            out_type,
-            out_type,
-            kernel_size=3,
-            stride=stride,
-            padding=1,
-            bias=False,
-        )
+        self.conv2 = conv3x3(out_type, out_type, stride=stride, initialize=initialize)
         self.bn2 = norm_layer(out_type)
         self.relu2 = nn.ReLU(out_type, True)
 
-        self.conv3 = nn.R2Conv(out_type, exp_type, kernel_size=1, bias=False)
+        self.conv3 = conv1x1(out_type, exp_type, initialize=initialize)
         self.bn3 = norm_layer(exp_type)
         self.relu3 = nn.ReLU(exp_type, True)
 
@@ -117,42 +174,36 @@ class E2ResNet(torch.nn.Module):
         layers: List[int],
         num_classes: int,
         base_width: int,
+        initialize: bool = True,
     ):
         super().__init__()
 
         self.gspace = gspace
-        self.in_type = nn.FieldType(gspace, 3 * [gspace.trivial_repr])
+        self.in_type = FieldType(gspace, 3 * [gspace.trivial_repr])
 
         self.norm_layer = nn.InnerBatchNorm
         self.dilation = 1
         self.base_width = base_width
         self.inplanes = self.base_width
 
-        out_type = nn.FieldType(gspace, self.base_width * [gspace.regular_repr])
-        self.conv1 = nn.R2Conv(
-            self.in_type,
-            out_type,
-            kernel_size=7,
-            stride=2,
-            padding=3,
-            bias=False,
-        )
+        out_type = FieldType(gspace, self.base_width * [gspace.regular_repr])
+        self.conv1 = conv7x7(self.in_type, out_type, stride=2, initialize=initialize)
         self.bn1 = self.norm_layer(out_type)
         self.maxpool = nn.PointwiseMaxPool(out_type, kernel_size=3, stride=2, padding=1)
 
         self.relu1 = nn.ReLU(out_type, True)
         self.layer1 = self._make_layer(gspace, block, base_width, layers[0])
         self.layer2 = self._make_layer(
-            gspace, block, base_width * 2, layers[1], stride=2
+            gspace, block, base_width * 2, layers[1], stride=2, initialize=initialize
         )
         self.layer3 = self._make_layer(
-            gspace, block, base_width * 4, layers[2], stride=2
+            gspace, block, base_width * 4, layers[2], stride=2, initialize=initialize
         )
         self.layer4 = self._make_layer(
-            gspace, block, base_width * 8, layers[3], stride=2
+            gspace, block, base_width * 8, layers[3], stride=2, initialize=initialize
         )
 
-        out_type = nn.FieldType(
+        out_type = FieldType(
             gspace, block.expansion * base_width * 8 * [gspace.regular_repr]
         )
         self.avgpool = nn.PointwiseAdaptiveAvgPool(out_type, (1, 1))
@@ -167,25 +218,42 @@ class E2ResNet(torch.nn.Module):
         planes: int,
         blocks: int,
         stride: int = 1,
+        initialize: bool = True,
     ) -> torch.nn.Sequential:
         downsample = None
 
         if stride != 1 or self.inplanes != planes:
-            in_type = nn.FieldType(gspace, self.inplanes * [gspace.regular_repr])
-            out_type = nn.FieldType(gspace, planes * [gspace.regular_repr])
+            in_type = FieldType(gspace, self.inplanes * [gspace.regular_repr])
+            out_type = FieldType(gspace, planes * [gspace.regular_repr])
             downsample = nn.SequentialModule(
-                nn.R2Conv(in_type, out_type, kernel_size=1, padding=0, stride=stride),
+                conv1x1(in_type, out_type, stride=stride, initialize=initialize),
                 self.norm_layer(out_type),
             )
 
         layers = []
         layers.append(
-            block(gspace, self.inplanes, planes, stride, downsample, self.norm_layer)
+            block(
+                gspace,
+                self.inplanes,
+                planes,
+                stride,
+                downsample,
+                self.norm_layer,
+                initialize=initialize,
+            )
         )
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
             layers.append(
-                block(gspace, self.inplanes, planes, 1, None, self.norm_layer)
+                block(
+                    gspace,
+                    self.inplanes,
+                    planes,
+                    1,
+                    None,
+                    self.norm_layer,
+                    initialize=initialize,
+                )
             )
 
         return torch.nn.Sequential(*layers)
@@ -213,3 +281,24 @@ class E2ResNet(torch.nn.Module):
         x = self.fc(x)
 
         return x
+
+
+if __name__ == "__main__":
+    gspace = gspaces.flip2dOnR2()
+    # resnet = E2ResNet(gspace, E2BasicBlock, [1, 1,1,1], 1000, 20)
+    in_type = FieldType(gspace, 3 * [gspace.regular_repr])
+    m = E2BasicBlock(gspace, 40, 40, 1, norm_layer=nn.InnerBatchNorm)
+    # m = nn.SequentialModule(
+    # nn.R2Conv(in_type, in_type, 3),
+    # nn.InnerBatchNorm(in_type)
+    # )
+    # bn = torch.nn.BatchNorm2d(32)
+    # print(m.in_type, m.out_type)
+    m = torch.nn.SyncBatchNorm.convert_sync_batchnorm(m)
+    # print(m.in_type, m.out_type)
+    # gspace = gspaces.flip2dOnR2()
+    # in_type = FieldType(gspace, 3 * [gspace.regular_repr])
+    # bn = nn.InnerBatchNorm(in_type)
+    # print(bn._contiguous.items())
+    # print(bn.__getattr__("batch_norm_[2]"))
+    # print(dir(bn))
