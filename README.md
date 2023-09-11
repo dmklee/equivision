@@ -29,8 +29,8 @@ https://github.com/pytorch/vision/tree/main/references/classification#resnet
 
 ## ToDo
 - [ ] Register the models
-- [ ] Create zoo readout script (num params, memory, inference time, equivariance)
+- [ ] Create model readout script (num params, memory, inference time, equivariance measure)
 - [x] Make the models un-initializable
-- [ ] Follow imagenet v2 training protocol, can i import their training code
-
+- [x] Follow imagenet v2 training protocol
+- [ ] Use torch hub style loading; for both equivariant and non-equivariant versions if possible?
 - look at caching the dataset
