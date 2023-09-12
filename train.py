@@ -7,7 +7,7 @@ import torch
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
 from torch import Tensor, nn
-from torch.utils.data import DataLoader, default_collate
+from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision.transforms import v2
 
@@ -68,8 +68,8 @@ class ImageNetDataModule(L.LightningDataModule):
             batch_size=self.batch_size,
             shuffle=True,
             persistent_workers=True,
+            pin_memory=True,
             num_workers=self.num_workers,
-            collate_fn=collate_fn,
         )
 
     def val_dataloader(self):
@@ -77,6 +77,7 @@ class ImageNetDataModule(L.LightningDataModule):
             self.test_set,
             batch_size=self.batch_size,
             persistent_workers=True,
+            pin_memory=True,
             num_workers=self.num_workers,
         )
 
