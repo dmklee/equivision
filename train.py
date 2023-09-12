@@ -181,7 +181,7 @@ def main(hparams):
         logger = None
     else:
         logger = WandbLogger(
-            project="ImageNet1k_v2",
+            project=project,
             name=run_name,
             id=run_name,
         )
