@@ -1,53 +1,181 @@
 import torchvision.models
-from escnn import gspaces
 
+from escnn import gspaces
 from src.e2resnet import E2BasicBlock, E2BottleNeck, E2ResNet
 
 
-def create_model(group: str, layers: int, initialize=True):
-    assert group in ("", "c1", "d1", "c4", "d4")
-    assert layers in (18, 34, 50, 101)
-    name = f"{group}resnet{layers}"
-    if group == "":
-        model_fn = {
-            18: torchvision.models.resnet18,
-            34: torchvision.models.resnet34,
-            50: torchvision.models.resnet50,
-            101: torchvision.models.resnet101,
-        }[layers]
-        model = model_fn(weights=None)
+# pytorch versions
+def resnet18(*args, **kwargs):
+    model = torchvision.models.resnet18()
+    model.name = "resnet18"
+    return model
 
-    else:
-        block_counts = {
-            18: [2, 2, 2, 2],
-            34: [3, 4, 6, 3],
-            50: [3, 4, 6, 3],
-            101: [3, 4, 23, 3],
-        }[layers]
-        block_fn = E2BasicBlock if layers <= 34 else E2BottleNeck
-        base_width = {
-            "c1": 78,
-            "d1": 55,
-            "c4": 39,
-            "d4": 28,
-        }[group]
 
-        gspace = {
-            "c1": gspaces.trivialOnR2(),
-            "d1": gspaces.flip2dOnR2(),
-            "c4": gspaces.rot2dOnR2(N=4),
-            "d4": gspaces.flipRot2dOnR2(N=4),
-        }[group]
-        model = E2ResNet(
-            gspace,
-            block=block_fn,
-            layers=block_counts,
-            num_classes=1000,
-            base_width=base_width,
-            initialize=initialize,
-        )
+def resnet50(*args, **kwargs):
+    model = torchvision.models.resnet50()
+    model.name = "resnet50"
+    return model
 
-    model.name = name
+
+def resnet101(*args, **kwargs):
+    model = torchvision.models.resnet101()
+    model.name = "resnet101"
+    return model
+
+
+def c1resnet18(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.trivialOnR2(),
+        block=E2BasicBlock,
+        layers=[2, 2, 2, 2],
+        num_classes=1000,
+        base_width=78,
+        initialize=initialize,
+    )
+    model.name = "c1resnet18"
+    return model
+
+
+def d1resnet18(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flip2dOnR2(),
+        block=E2BasicBlock,
+        layers=[2, 2, 2, 2],
+        num_classes=1000,
+        base_width=55,
+        initialize=initialize,
+    )
+    model.name = "d1resnet18"
+    return model
+
+
+def c4resnet18(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.rot2dOnR2(N=4),
+        block=E2BasicBlock,
+        layers=[2, 2, 2, 2],
+        num_classes=1000,
+        base_width=39,
+        initialize=initialize,
+    )
+    model.name = "c4resnet18"
+    return model
+
+
+def d4resnet18(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flipRot2dOnR2(N=4),
+        block=E2BasicBlock,
+        layers=[2, 2, 2, 2],
+        num_classes=1000,
+        base_width=28,
+        initialize=initialize,
+    )
+    model.name = "d4resnet18"
+    return model
+
+
+def c1resnet50(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.trivialOnR2(),
+        block=E2BottleNeck,
+        layers=[3, 4, 6, 3],
+        num_classes=1000,
+        base_width=74,
+        initialize=initialize,
+    )
+    model.name = "c1resnet50"
+    return model
+
+
+def d1resnet50(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flip2dOnR2(),
+        block=E2BottleNeck,
+        layers=[3, 4, 6, 3],
+        num_classes=1000,
+        base_width=53,
+        initialize=initialize,
+    )
+    model.name = "d1resnet50"
+    return model
+
+
+def c4resnet50(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.rot2dOnR2(N=4),
+        block=E2BottleNeck,
+        layers=[3, 4, 6, 3],
+        num_classes=1000,
+        base_width=38,
+        initialize=initialize,
+    )
+    model.name = "c4resnet50"
+    return model
+
+
+def d4resnet50(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flipRot2dOnR2(N=4),
+        block=E2BottleNeck,
+        layers=[3, 4, 6, 3],
+        num_classes=1000,
+        base_width=27,
+        initialize=initialize,
+    )
+    model.name = "d4resnet50"
+    return model
+
+
+def c1resnet101(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.trivialOnR2(),
+        block=E2BottleNeck,
+        layers=[3, 4, 23, 3],
+        num_classes=1000,
+        base_width=72,
+        initialize=initialize,
+    )
+    model.name = "c1resnet101"
+    return model
+
+
+def d1resnet101(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flip2dOnR2(),
+        block=E2BottleNeck,
+        layers=[3, 4, 23, 3],
+        num_classes=1000,
+        base_width=51,
+        initialize=initialize,
+    )
+    model.name = "d1resnet101"
+    return model
+
+
+def c4resnet101(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.rot2dOnR2(N=4),
+        block=E2BottleNeck,
+        layers=[3, 4, 23, 3],
+        num_classes=1000,
+        base_width=36,
+        initialize=initialize,
+    )
+    model.name = "c4resnet101"
+    return model
+
+
+def d4resnet101(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flipRot2dOnR2(N=4),
+        block=E2BottleNeck,
+        layers=[3, 4, 23, 3],
+        num_classes=1000,
+        base_width=26,
+        initialize=initialize,
+    )
+    model.name = "d4resnet101"
     return model
 
 
@@ -56,7 +184,10 @@ def count_params(m):
 
 
 if __name__ == "__main__":
-    for layers in [50, 101]:
+    import torch
+
+    for layers in [18, 50, 101][::-1]:
         for group in ["", "c1", "d1", "c4", "d4"]:
-            m = create_model(group, layers, initialize=False)
+            m = eval(group + "resnet" + str(layers))(False)
             print(f"{m.name}: {count_params(m)*1e-6:.1f}M")
+        print()

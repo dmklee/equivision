@@ -1,19 +1,20 @@
 from typing import Callable, List, Optional, Type, Union
 
 import torch
+from torch import Tensor
+
 from escnn import gspaces, nn
 from escnn.nn import FieldType, GeometricTensor
-from torch import Tensor
 
 
 def conv7x7(
     in_type: FieldType,
     out_type: FieldType,
-    stride=1,
-    padding=3,
-    dilation=1,
-    bias=False,
-    initialize=True,
+    stride: int = 1,
+    padding: int = 3,
+    dilation: int = 1,
+    bias: bool = False,
+    initialize: bool = True,
 ):
     return nn.R2Conv(
         in_type,
@@ -30,11 +31,11 @@ def conv7x7(
 def conv3x3(
     in_type: FieldType,
     out_type: FieldType,
-    stride=1,
-    padding=1,
-    dilation=1,
-    bias=False,
-    initialize=True,
+    stride: int = 1,
+    padding: int = 1,
+    dilation: int = 1,
+    bias: bool = False,
+    initialize: bool = True,
 ):
     return nn.R2Conv(
         in_type,
@@ -51,11 +52,11 @@ def conv3x3(
 def conv1x1(
     in_type: FieldType,
     out_type: FieldType,
-    stride=1,
-    padding=0,
-    dilation=1,
-    bias=False,
-    initialize=True,
+    stride: int = 1,
+    padding: int = 0,
+    dilation: int = 1,
+    bias: bool = False,
+    initialize: bool = True,
 ):
     return nn.R2Conv(
         in_type,
@@ -203,13 +204,13 @@ class E2ResNet(torch.nn.Module):
             gspace, block, base_width * 8, layers[3], stride=2, initialize=initialize
         )
 
-        out_type = FieldType(
+        fmap_type = FieldType(
             gspace, block.expansion * base_width * 8 * [gspace.regular_repr]
         )
-        self.avgpool = nn.PointwiseAdaptiveAvgPool(out_type, (1, 1))
+        self.avgpool = nn.PointwiseAdaptiveAvgPool(fmap_type, (1, 1))
 
-        self.gpool = nn.GroupPooling(out_type)
-        self.fc = torch.nn.Linear(block.expansion * base_width * 8, num_classes)
+        out_type = FieldType(gspace, num_classes * [gspace.trivial_repr])
+        self.fc = nn.R2Conv(fmap_type, out_type, kernel_size=1)
 
     def _make_layer(
         self,
@@ -276,29 +277,5 @@ class E2ResNet(torch.nn.Module):
         x = self.forward_features(x)
 
         x = self.avgpool(x)
-        x = self.gpool(x).tensor
-        x = x.squeeze(-1).squeeze(-1)
-        x = self.fc(x)
-
-        return x
-
-
-if __name__ == "__main__":
-    gspace = gspaces.flip2dOnR2()
-    # resnet = E2ResNet(gspace, E2BasicBlock, [1, 1,1,1], 1000, 20)
-    in_type = FieldType(gspace, 3 * [gspace.regular_repr])
-    m = E2BasicBlock(gspace, 40, 40, 1, norm_layer=nn.InnerBatchNorm)
-    # m = nn.SequentialModule(
-    # nn.R2Conv(in_type, in_type, 3),
-    # nn.InnerBatchNorm(in_type)
-    # )
-    # bn = torch.nn.BatchNorm2d(32)
-    # print(m.in_type, m.out_type)
-    m = torch.nn.SyncBatchNorm.convert_sync_batchnorm(m)
-    # print(m.in_type, m.out_type)
-    # gspace = gspaces.flip2dOnR2()
-    # in_type = FieldType(gspace, 3 * [gspace.regular_repr])
-    # bn = nn.InnerBatchNorm(in_type)
-    # print(bn._contiguous.items())
-    # print(bn.__getattr__("batch_norm_[2]"))
-    # print(dir(bn))
+        x = self.fc(x).tensor
+        return x.squeeze(-2).squeeze(-1)

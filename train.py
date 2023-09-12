@@ -30,22 +30,23 @@ class ImageNetDataModule(L.LightningDataModule):
 
         self.train_tfms = v2.Compose(
             [
+                v2.RandomResizedCrop(224, antialias=True),
+                v2.RandomHorizontalFlip(0.5),
                 v2.PILToTensor(),
-                v2.Resize(256, antialias=True),
-                v2.RandAugment(),
-                v2.RandomCrop(224),
                 v2.ToDtype(torch.float32, scale=True),
                 v2.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+                v2.ToPureTensor(),
             ]
         )
 
         self.test_tfms = v2.Compose(
             [
-                v2.PILToTensor(),
                 v2.Resize(256, antialias=True),
                 v2.CenterCrop(224),
+                v2.PILToTensor(),
                 v2.ToDtype(torch.float32, scale=True),
                 v2.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+                v2.ToPureTensor(),
             ]
         )
 
@@ -62,13 +63,6 @@ class ImageNetDataModule(L.LightningDataModule):
         )
 
     def train_dataloader(self) -> None:
-        cutmix = v2.CutMix(num_classes=NUM_CLASSES)
-        mixup = v2.MixUp(num_classes=NUM_CLASSES)
-        cutmix_or_mixup = v2.RandomChoice([cutmix, mixup])
-
-        def collate_fn(batch):
-            return cutmix_or_mixup(*default_collate(batch))
-
         return DataLoader(
             self.train_set,
             batch_size=self.batch_size,
@@ -88,13 +82,27 @@ class ImageNetDataModule(L.LightningDataModule):
 
 
 class ClassifierModule(L.LightningModule):
-    def __init__(self, model_name: str, max_epochs: int) -> None:
+    def __init__(
+        self,
+        model_name: str,
+        max_epochs: int = 90,
+        lr: float = 0.1,
+        lr_step_size: int = 30,
+        lr_gamma: float = 0.1,
+        momentum: float = 0.9,
+        weight_decay: float = 1e-4,
+    ) -> None:
         super().__init__()
         self.save_hyperparameters()
 
         self.model = create_model(model_name)
         self.criterion = nn.CrossEntropyLoss()
         self.max_epochs = max_epochs
+        self.lr = lr
+        self.lr_step_size = lr_step_size
+        self.lr_gamma = lr_gamma
+        self.momentum = momentum
+        self.weight_decay = weight_decay
 
     def forward(self, x: Tensor) -> Tensor:
         return self.model(x)
@@ -112,20 +120,31 @@ class ClassifierModule(L.LightningModule):
     def validation_step(self, val_batch: Tuple[Tensor, Tensor], batch_idx: int) -> None:
         x, y = val_batch
         out = self.forward(x)
+
+        pred = out.topk(k=5, dim=1)[1].t()
+        correct = pred.eq(y.view(1, -1).expand_as(pred))
+        acc1 = correct[0].float().mean()
+        acc5 = correct[:5].any(dim=0).float().mean()
         loss = self.criterion(out, y)
         self.log("val_loss", loss, sync_dist=True)
-        self.log("val_acc", (torch.argmax(out, 1) == y).float().mean(), sync_dist=True)
+        self.log("val_acc@1", acc1, sync_dist=True)
+        self.log("val_acc@5", acc5, sync_dist=True)
 
     def configure_optimizers(
         self,
-    ) -> Tuple[List[torch.optim.Optimizer], List[torch.optim.lr_scheduler.LRScheduler]]:
+    ) -> Tuple[
+        List[torch.optim.Optimizer], List[torch.optim.lr_scheduler._LRScheduler]
+    ]:
         optimizer = torch.optim.SGD(
-            self.parameters(), lr=1e-1, nesterov=True, momentum=0.9, weight_decay=1e-4
+            self.parameters(),
+            lr=self.lr,
+            momentum=self.momentum,
+            weight_decay=self.weight_decay,
         )
         lr_scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer,
-            step_size=30,
-            gamma=0.1,
+            step_size=self.lr_step_size,
+            gamma=self.lr_gamma,
         )
         return [optimizer], [lr_scheduler]
 
@@ -153,10 +172,9 @@ def main(hparams):
         precision=hparams.precision,
         strategy="ddp",
         max_epochs=hparams.max_epochs,
-        gradient_clip_val=hparams.gradient_clip_val,
         accumulate_grad_batches=hparams.accumulate_grad_batches,
         logger=WandbLogger(
-            project="ImageNet1k",
+            project="ImageNet1k_v1",
             name=run_name,
             id=run_name,
         ),
@@ -171,7 +189,15 @@ def main(hparams):
         ],
     )
 
-    model = ClassifierModule(hparams.model, hparams.max_epochs)
+    model = ClassifierModule(
+        model_name=hparams.model,
+        max_epochs=hparams.max_epochs,
+        lr=hparams.lr,
+        lr_step_size=hparams.lr_step_size,
+        lr_gamma=hparams.lr_gamma,
+        momentum=hparams.momentum,
+        weight_decay=hparams.weight_decay,
+    )
     datamodule = ImageNetDataModule(
         hparams.data_dir, hparams.batch_size, hparams.num_workers
     )
@@ -180,17 +206,23 @@ def main(hparams):
 
 
 if __name__ == "__main__":
+    # https://github.com/pytorch/vision/tree/main/references/classification#resnet
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, default="./")
     parser.add_argument("--model", type=str, default="c1resnet18")
     parser.add_argument("--devices", nargs="+", type=int, default=[0])
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--precision", type=str, default="bf16-mixed")
-    parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--num_workers", type=int, default=10)
-    parser.add_argument("--gradient_clip_val", type=float, default=1.0)
-    parser.add_argument("--accumulate_grad_batches", type=int, default=1)
+    parser.add_argument("--precision", type=str, default="16-mixed")
+    parser.add_argument("--batch_size", type=int, default=256)
+    parser.add_argument("--lr", type=float, default=0.1)
+    parser.add_argument("--lr_step_size", type=int, default=30)
+    parser.add_argument("--lr_gamma", type=float, default=0.1)
+    parser.add_argument("--momentum", type=float, default=0.9)
     parser.add_argument("--max_epochs", type=int, default=90)
+    parser.add_argument("--weight_decay", type=float, default=1e-4)
+    parser.add_argument("--num_workers", type=int, default=10)
+    parser.add_argument("--accumulate_grad_batches", type=int, default=1)
 
     args = parser.parse_args()
 
