@@ -157,10 +157,11 @@ def main(hparams):
     # create run name
     L.seed_everything(hparams.seed, workers=True)
 
+    project = "ImageNet1k_v1"
     run_name = f"{hparams.model}_{hparams.seed}"
 
     # look for existing checkpoint to resume from
-    ckpt_path = Path("./checkpoints", run_name, "last.ckpt")
+    ckpt_path = Path("./checkpoints", project, run_name, "last.ckpt")
     if ckpt_path.exists():
         ckpt_path = str(ckpt_path)
     else:
@@ -174,13 +175,13 @@ def main(hparams):
         max_epochs=hparams.max_epochs,
         accumulate_grad_batches=hparams.accumulate_grad_batches,
         logger=WandbLogger(
-            project="ImageNet1k_v1",
+            project=project,
             name=run_name,
             id=run_name,
         ),
         callbacks=[
             ModelCheckpoint(
-                dirpath=f"./checkpoints/{run_name}",
+                dirpath=f"./checkpoints/{project}/{run_name}",
                 filename="{epoch:02d}-{val_loss:.2f}",
                 monitor="val_loss",
                 mode="min",
