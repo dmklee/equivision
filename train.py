@@ -8,21 +8,23 @@ from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
 from torch import Tensor, nn
 from torch.utils.data import DataLoader
-from torchvision.datasets import ImageFolder
+from torchvision.datasets import FakeData, ImageFolder
 from torchvision.transforms import v2
 
 from src.modelzoo import create_model
 
-NUM_CLASSES = 1000
-
 
 class ImageNetDataModule(L.LightningDataModule):
     def __init__(
-        self, data_dir: str = "./datasets", batch_size: int = 128, num_workers: int = 8
+        self,
+        data_dir: str = "./datasets",
+        batch_size: int = 128,
+        num_workers: int = 8,
+        dummy: bool = False,
     ) -> None:
         super().__init__()
-        self.num_classes = NUM_CLASSES
         self.img_shape = (3, 224, 224)
+        self.dummy = dummy
 
         self.data_dir = Path(data_dir)
         self.batch_size = batch_size
@@ -51,16 +53,23 @@ class ImageNetDataModule(L.LightningDataModule):
         )
 
     def setup(self, stage: str) -> None:
-        # self.train_set = FakeData(num_classes=NUM_CLASSES, transform=self.train_tfms)
-        # self.test_set = FakeData(num_classes=NUM_CLASSES, transform=self.test_tfms)
-        self.train_set = ImageFolder(
-            str(self.data_dir / "train"),
-            transform=self.train_tfms,
-        )
-        self.test_set = ImageFolder(
-            str(self.data_dir / "val"),
-            transform=self.test_tfms,
-        )
+        if self.dummy:
+            print("[WARNING] Using dummy data!!")
+            self.train_set = FakeData(
+                1281167, (3, 224, 224), num_classes=1000, transform=self.train_tfms
+            )
+            self.test_set = FakeData(
+                50000, (3, 224, 224), num_classes=1000, transform=self.test_tfms
+            )
+        else:
+            self.train_set = ImageFolder(
+                str(self.data_dir / "train"),
+                transform=self.train_tfms,
+            )
+            self.test_set = ImageFolder(
+                str(self.data_dir / "val"),
+                transform=self.test_tfms,
+            )
 
     def train_dataloader(self) -> None:
         return DataLoader(
@@ -168,6 +177,14 @@ def main(hparams):
     else:
         ckpt_path = None
 
+    if hparams.no_wandb:
+        logger = None
+    else:
+        logger = WandbLogger(
+            project="ImageNet1k_v2",
+            name=run_name,
+            id=run_name,
+        )
     trainer = L.Trainer(
         accelerator="gpu",
         devices=hparams.devices,
@@ -175,11 +192,7 @@ def main(hparams):
         strategy="ddp",
         max_epochs=hparams.max_epochs,
         accumulate_grad_batches=hparams.accumulate_grad_batches,
-        logger=WandbLogger(
-            project=project,
-            name=run_name,
-            id=run_name,
-        ),
+        logger=logger,
         callbacks=[
             ModelCheckpoint(
                 dirpath=f"./checkpoints/{project}/{run_name}",
@@ -201,7 +214,10 @@ def main(hparams):
         weight_decay=hparams.weight_decay,
     )
     datamodule = ImageNetDataModule(
-        hparams.data_dir, hparams.batch_size, hparams.num_workers
+        data_dir=hparams.data_dir,
+        batch_size=hparams.batch_size,
+        num_workers=hparams.num_workers,
+        dummy=hparams.dummy_data,
     )
 
     trainer.fit(model, datamodule=datamodule, ckpt_path=ckpt_path)
@@ -223,8 +239,10 @@ if __name__ == "__main__":
     parser.add_argument("--momentum", type=float, default=0.9)
     parser.add_argument("--max_epochs", type=int, default=90)
     parser.add_argument("--weight_decay", type=float, default=1e-4)
-    parser.add_argument("--num_workers", type=int, default=10)
+    parser.add_argument("--num_workers", type=int, default=8)
     parser.add_argument("--accumulate_grad_batches", type=int, default=1)
+    parser.add_argument("--no_wandb", action="store_true")
+    parser.add_argument("--dummy_data", action="store_true")
 
     args = parser.parse_args()
 

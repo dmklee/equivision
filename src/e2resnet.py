@@ -210,7 +210,12 @@ class E2ResNet(torch.nn.Module):
         self.avgpool = nn.PointwiseAdaptiveAvgPool(fmap_type, (1, 1))
 
         out_type = FieldType(gspace, num_classes * [gspace.trivial_repr])
-        self.fc = nn.R2Conv(fmap_type, out_type, kernel_size=1)
+        self.fc = nn.R2Conv(fmap_type, out_type, kernel_size=1, initialize=initialize)
+
+        for m in self.modules():
+            if isinstance(m, torch.nn.BatchNorm3d):
+                torch.nn.init.constant_(m.weight, 1)
+                torch.nn.init.constant_(m.bias, 0)
 
     def _make_layer(
         self,
@@ -223,9 +228,11 @@ class E2ResNet(torch.nn.Module):
     ) -> torch.nn.Sequential:
         downsample = None
 
-        if stride != 1 or self.inplanes != planes:
+        if stride != 1 or self.inplanes != planes * block.expansion:
             in_type = FieldType(gspace, self.inplanes * [gspace.regular_repr])
-            out_type = FieldType(gspace, planes * [gspace.regular_repr])
+            out_type = FieldType(
+                gspace, planes * block.expansion * [gspace.regular_repr]
+            )
             downsample = nn.SequentialModule(
                 conv1x1(in_type, out_type, stride=stride, initialize=initialize),
                 self.norm_layer(out_type),
