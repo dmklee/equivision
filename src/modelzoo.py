@@ -183,10 +183,12 @@ def count_params(m):
     return sum(p.numel() for p in m.parameters() if p.requires_grad)
 
 
-if __name__ == "__main__":
-    import torch
+def create_model(model_name: str):
+    return eval(model_name)()
 
-    for layers in [18, 50, 101][::-1]:
+
+if __name__ == "__main__":
+    for layers in [18, 50, 101]:
         for group in ["", "c1", "d1", "c4", "d4"]:
             m = eval(group + "resnet" + str(layers))(False)
             print(f"{m.name}: {count_params(m)*1e-6:.1f}M")
