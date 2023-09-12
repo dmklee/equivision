@@ -132,7 +132,7 @@ class ClassifierModule(L.LightningModule):
         out = self.forward(x)
 
         pred = out.topk(k=5, dim=1)[1].t()
-        correct = pred.eq(y.view(1, -1).expand_as(pred))
+        correct = pred.eq(y.view(1, -1).expand_as(pred).clone())
         acc1 = correct[0].float().mean()
         acc5 = correct[:5].any(dim=0).float().mean()
         loss = self.criterion(out, y)
