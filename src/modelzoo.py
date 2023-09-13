@@ -81,7 +81,7 @@ def c1resnet50(initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=74,
+        base_width=70,
         initialize=initialize,
     )
     model.name = "c1resnet50"
@@ -94,7 +94,7 @@ def d1resnet50(initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=53,
+        base_width=50,
         initialize=initialize,
     )
     model.name = "d1resnet50"
@@ -107,7 +107,7 @@ def c4resnet50(initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=38,
+        base_width=35,
         initialize=initialize,
     )
     model.name = "c4resnet50"
@@ -120,7 +120,7 @@ def d4resnet50(initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=27,
+        base_width=25,
         initialize=initialize,
     )
     model.name = "d4resnet50"
@@ -133,7 +133,7 @@ def c1resnet101(initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=72,
+        base_width=70,
         initialize=initialize,
     )
     model.name = "c1resnet101"
@@ -146,7 +146,7 @@ def d1resnet101(initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=51,
+        base_width=50,
         initialize=initialize,
     )
     model.name = "d1resnet101"
@@ -159,7 +159,7 @@ def c4resnet101(initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=36,
+        base_width=35,
         initialize=initialize,
     )
     model.name = "c4resnet101"
@@ -172,7 +172,7 @@ def d4resnet101(initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=26,
+        base_width=25,
         initialize=initialize,
     )
     model.name = "d4resnet101"
