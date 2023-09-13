@@ -209,8 +209,8 @@ class E2ResNet(torch.nn.Module):
         )
         self.avgpool = nn.PointwiseAdaptiveAvgPool(fmap_type, (1, 1))
 
-        out_type = FieldType(gspace, num_classes * [gspace.trivial_repr])
-        self.fc = nn.R2Conv(fmap_type, out_type, kernel_size=1, initialize=initialize)
+        self.gpool = nn.GroupPooling(fmap_type)
+        self.fc = torch.nn.Linear(block.expansion * base_width * 8, num_classes)
 
         for m in self.modules():
             if isinstance(m, torch.nn.BatchNorm3d):
@@ -284,5 +284,5 @@ class E2ResNet(torch.nn.Module):
         x = self.forward_features(x)
 
         x = self.avgpool(x)
-        x = self.fc(x).tensor
-        return x.squeeze(-2).squeeze(-1)
+        x = self.gpool(x).tensor.squeeze(-2).squeeze(-1)
+        return self.fc(x)
