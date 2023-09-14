@@ -188,6 +188,7 @@ def main(hparams):
     trainer = L.Trainer(
         accelerator="gpu",
         devices=hparams.devices,
+        num_nodes=args.num_nodes,
         precision=hparams.precision,
         strategy="ddp",
         max_epochs=hparams.max_epochs,
@@ -231,6 +232,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="c1resnet18")
     parser.add_argument("--devices", nargs="+", type=int, default=[0])
     parser.add_argument("--num_devices", type=int, default=None)
+    parser.add_argument("--num_nodes", type=int, default=1)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--precision", type=str, default="16-mixed")
     parser.add_argument("--batch_size", type=int, default=256)
