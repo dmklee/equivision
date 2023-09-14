@@ -230,6 +230,7 @@ if __name__ == "__main__":
     parser.add_argument("--data_dir", type=str, default="./")
     parser.add_argument("--model", type=str, default="c1resnet18")
     parser.add_argument("--devices", nargs="+", type=int, default=[0])
+    parser.add_argument("--num_devices", type=int, default=None)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--precision", type=str, default="16-mixed")
     parser.add_argument("--batch_size", type=int, default=256)
@@ -245,5 +246,8 @@ if __name__ == "__main__":
     parser.add_argument("--dummy_data", action="store_true")
 
     args = parser.parse_args()
+
+    if args.num_devices is not None:
+        args.devices = args.num_devices
 
     main(args)
