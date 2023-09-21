@@ -159,7 +159,7 @@ class ClassifierModule(L.LightningModule):
         return [optimizer], [lr_scheduler]
 
     def load_state_dict(self, state_dict) -> None:
-        d = {k.removeprefix("model."): v for k, v in state_dict.items()}
+        d = {k[len("model.") :]: v for k, v in state_dict.items()}
         self.model.load_state_dict(d, strict=False)
 
 
