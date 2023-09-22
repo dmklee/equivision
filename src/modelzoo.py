@@ -76,6 +76,19 @@ def d4resnet18(initialize: bool = True):
     return model
 
 
+def d8resnet18(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flipRot2dOnR2(N=8),
+        block=E2BasicBlock,
+        layers=[2, 2, 2, 2],
+        num_classes=1000,
+        base_width=20,
+        initialize=initialize,
+    )
+    model.name = "d8resnet18"
+    return model
+
+
 def c8resnet18(initialize: bool = True):
     model = E2ResNet(
         gspace=gspaces.rot2dOnR2(N=8),
@@ -138,6 +151,19 @@ def d4resnet50(initialize: bool = True):
         initialize=initialize,
     )
     model.name = "d4resnet50"
+    return model
+
+
+def d8resnet50(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flipRot2dOnR2(N=8),
+        block=E2BottleNeck,
+        layers=[3, 4, 6, 3],
+        num_classes=1000,
+        base_width=18,
+        initialize=initialize,
+    )
+    model.name = "d8resnet50"
     return model
 
 
@@ -219,6 +245,19 @@ def c8resnet101(initialize: bool = True):
     return model
 
 
+def d8resnet101(initialize: bool = True):
+    model = E2ResNet(
+        gspace=gspaces.flipRot2dOnR2(N=8),
+        block=E2BottleNeck,
+        layers=[3, 4, 23, 3],
+        num_classes=1000,
+        base_width=18,
+        initialize=initialize,
+    )
+    model.name = "d8resnet101"
+    return model
+
+
 def count_params(m: torch.nn.Module):
     return sum(p.numel() for p in m.parameters() if p.requires_grad)
 
@@ -254,11 +293,10 @@ def create_model(model_name: str):
 
 if __name__ == "__main__":
     for layers in [18, 50, 101]:
-        # for group in ["", "c1", "d1", "c4", "d4"]:
-        for group in ["", "c8"]:  # "c1", "d1", "c4", "d4"]:
+        for group in ["", "c1", "d1", "c4", "d4", "c8"]:
             model = eval(group + "resnet" + str(layers))(False).cuda().eval()
             mem = torch.cuda.memory_allocated()
-            inf_time = measure_inference(model)
+            inf_time = measure_inference(model, batch_size=32)
             print(
                 f"{model.name}: {count_params(model)*1e-6:.1f}M |"
                 f" {inf_time:.1f}ms | {mem * 1e-9:.2f}Gb"
