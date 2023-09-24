@@ -5,18 +5,31 @@ Collection of SE(2) Equivariant Vision Models
 | Name         | Num. Params | Acc@1 | Acc@5 | Checkpoint |
 | ------------ |:--------:   | ----- | ----- | ---------- |
 | ResNet18\*   |      11.7M  |       |       |            |
-| C1-ResNet18  |      11.8M  |       |       |            |
 | D1-ResNet18  |      11.5M  |       |       |            |
 | C4-ResNet18  |      11.7M  |       |       |            |
-| ResNet50\*   |      11.7M  |       |       |            |
-| C1-ResNet50  |      11.8M  |       |       |            |
-| D1-ResNet50  |      11.5M  |       |       |            |
-| C4-ResNet50  |      11.7M  |       |       |            |
+| D4-ResNet18  |      11.7M  |       |       |            |
+| C8-ResNet18  |      11.7M  |       |       |            |
+
+XXXXXX models coming soon...
+- Restricted Group Models D8D4D1
+- Vision Transformer
 
 
 ## Usage
-### As Normal Models
 
+```
+import torch
+
+model = torch.hub.load('dmklee/equi-vision-models', 'd1resnet18')
+```
+
+
+```
+from equi_vision_models import models
+
+model = models.d1resnet18(pretrained=True)
+
+```
 ### As Equivariant Models
 
 ## Training
