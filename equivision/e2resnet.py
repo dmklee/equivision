@@ -1,10 +1,9 @@
 from typing import Callable, List, Optional, Type, Union
 
 import torch
-from torch import Tensor
-
 from escnn import gspaces, nn
 from escnn.nn import FieldType, GeometricTensor
+from torch import Tensor
 
 
 def conv7x7(

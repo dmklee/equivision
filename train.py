@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import FakeData, ImageFolder
 from torchvision.transforms import v2
 
-from src.modelzoo import create_model
+from equivision.models import get_model
 
 
 class ImageNetDataModule(L.LightningDataModule):
@@ -105,7 +105,7 @@ class ClassifierModule(L.LightningModule):
         super().__init__()
         self.save_hyperparameters()
 
-        self.model = create_model(model_name)
+        self.model = get_model(model_name)
         self.criterion = nn.CrossEntropyLoss()
         self.max_epochs = max_epochs
         self.lr = lr
