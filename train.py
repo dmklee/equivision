@@ -168,8 +168,25 @@ def main(hparams):
     # create run name
     L.seed_everything(hparams.seed, workers=True)
 
+    model = ClassifierModule(
+        model_name=hparams.model,
+        fast_model=hparams.fast_model,
+        max_epochs=hparams.max_epochs,
+        lr=hparams.lr,
+        lr_step_size=hparams.lr_step_size,
+        lr_gamma=hparams.lr_gamma,
+        momentum=hparams.momentum,
+        weight_decay=hparams.weight_decay,
+    )
+    datamodule = ImageNetDataModule(
+        data_dir=hparams.data_dir,
+        batch_size=hparams.batch_size,
+        num_workers=hparams.num_workers,
+        dummy=hparams.dummy_data,
+    )
+
     project = "ImageNet1k_v1"
-    run_name = f"{hparams.model}_{hparams.seed}"
+    run_name = f"{model.model.name}_{hparams.seed}"
 
     # look for existing checkpoint to resume from
     ckpt_path = Path("./checkpoints", project, run_name, "last.ckpt")
@@ -204,23 +221,6 @@ def main(hparams):
                 save_last=True,
             ),
         ],
-    )
-
-    model = ClassifierModule(
-        model_name=hparams.model,
-        fast_model=hparams.fast_model,
-        max_epochs=hparams.max_epochs,
-        lr=hparams.lr,
-        lr_step_size=hparams.lr_step_size,
-        lr_gamma=hparams.lr_gamma,
-        momentum=hparams.momentum,
-        weight_decay=hparams.weight_decay,
-    )
-    datamodule = ImageNetDataModule(
-        data_dir=hparams.data_dir,
-        batch_size=hparams.batch_size,
-        num_workers=hparams.num_workers,
-        dummy=hparams.dummy_data,
     )
 
     trainer.fit(model, datamodule=datamodule, ckpt_path=ckpt_path)
