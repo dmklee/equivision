@@ -18,6 +18,7 @@ class ImageNetDataModule(L.LightningDataModule):
     def __init__(
         self,
         data_dir: str = "./datasets",
+        rot_data: bool = False,
         batch_size: int = 128,
         num_workers: int = 8,
         dummy: bool = False,
@@ -30,27 +31,33 @@ class ImageNetDataModule(L.LightningDataModule):
         self.batch_size = batch_size
         self.num_workers = num_workers
 
-        self.train_tfms = v2.Compose(
-            [
-                v2.RandomResizedCrop(224, antialias=True),
-                v2.RandomHorizontalFlip(0.5),
-                v2.PILToTensor(),
-                v2.ToDtype(torch.float32, scale=True),
-                v2.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-                v2.ToPureTensor(),
-            ]
-        )
+        train_tfms = [
+            v2.RandomResizedCrop(224, antialias=True),
+            v2.RandomHorizontalFlip(0.5),
+            v2.PILToTensor(),
+            v2.ToDtype(torch.float32, scale=True),
+            v2.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+            v2.ToPureTensor(),
+        ]
+        if rot_data:
+            train_tfms.insert(
+                2, v2.RandomRotation(180, interpolation=v2.InterpolationMode.BILINEAR)
+            )
+        self.train_tfms = v2.Compose(train_tfms)
 
-        self.test_tfms = v2.Compose(
-            [
-                v2.Resize(256, antialias=True),
-                v2.CenterCrop(224),
-                v2.PILToTensor(),
-                v2.ToDtype(torch.float32, scale=True),
-                v2.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-                v2.ToPureTensor(),
-            ]
-        )
+        test_tfms = [
+            v2.Resize(256, antialias=True),
+            v2.CenterCrop(224),
+            v2.PILToTensor(),
+            v2.ToDtype(torch.float32, scale=True),
+            v2.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+            v2.ToPureTensor(),
+        ]
+        if rot_data:
+            test_tfms.insert(
+                2, v2.RandomRotation(180, interpolation=v2.InterpolationMode.BILINEAR)
+            )
+        self.test_tfms = v2.Compose(test_tfms)
 
     def setup(self, stage: str) -> None:
         if self.dummy:
@@ -180,12 +187,13 @@ def main(hparams):
     )
     datamodule = ImageNetDataModule(
         data_dir=hparams.data_dir,
+        rot_data=hparams.rot_data,
         batch_size=hparams.batch_size,
         num_workers=hparams.num_workers,
         dummy=hparams.dummy_data,
     )
 
-    project = "ImageNet1k_v1"
+    project = "rotImageNet1k_v1" if hparams.rot_data else "ImageNet1k_v1"
     run_name = f"{model.model.name}_{hparams.seed}"
 
     # look for existing checkpoint to resume from
@@ -231,6 +239,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, default="./")
+    parser.add_argument("--rot_data", action="store_true")
     parser.add_argument("--model", type=str, default="c1resnet18")
     parser.add_argument("--fast_model", action="store_true")
     parser.add_argument("--devices", nargs="+", type=int, default=[0])
