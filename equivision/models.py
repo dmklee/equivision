@@ -32,7 +32,9 @@ def resnet101(*args, **kwargs):
     return model
 
 
-def c1resnet18(pretrained: bool = False, initialize: bool = True):
+def c1resnet18(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -41,19 +43,23 @@ def c1resnet18(pretrained: bool = False, initialize: bool = True):
         block=E2BasicBlock,
         layers=[2, 2, 2, 2],
         num_classes=1000,
-        base_width=78,
+        base_width=78 if fixed_params else 64,
         initialize=initialize,
     )
     model.name = "c1resnet18"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c1resnet18"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def d1resnet18(pretrained: bool = False, initialize: bool = True):
+def d1resnet18(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -62,19 +68,23 @@ def d1resnet18(pretrained: bool = False, initialize: bool = True):
         block=E2BasicBlock,
         layers=[2, 2, 2, 2],
         num_classes=1000,
-        base_width=55,
+        base_width=55 if fixed_params else 32,
         initialize=initialize,
     )
     model.name = "d1resnet18"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["d1resnet18"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def c4resnet18(pretrained: bool = False, initialize: bool = True):
+def c4resnet18(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -83,19 +93,23 @@ def c4resnet18(pretrained: bool = False, initialize: bool = True):
         block=E2BasicBlock,
         layers=[2, 2, 2, 2],
         num_classes=1000,
-        base_width=39,
+        base_width=39 if fixed_params else 16,
         initialize=initialize,
     )
     model.name = "c4resnet18"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c4resnet18"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def d4resnet18(pretrained: bool = False, initialize: bool = True):
+def d4resnet18(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -104,19 +118,23 @@ def d4resnet18(pretrained: bool = False, initialize: bool = True):
         block=E2BasicBlock,
         layers=[2, 2, 2, 2],
         num_classes=1000,
-        base_width=28,
+        base_width=28 if fixed_params else 8,
         initialize=initialize,
     )
     model.name = "d4resnet18"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["d4resnet18"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def c8resnet18(pretrained: bool = False, initialize: bool = True):
+def c8resnet18(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -125,19 +143,23 @@ def c8resnet18(pretrained: bool = False, initialize: bool = True):
         block=E2BasicBlock,
         layers=[2, 2, 2, 2],
         num_classes=1000,
-        base_width=28,
+        base_width=28 if fixed_params else 8,
         initialize=initialize,
     )
     model.name = "c8resnet18"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c8resnet18"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def c1resnet50(pretrained: bool = False, initialize: bool = True):
+def c1resnet50(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -146,19 +168,23 @@ def c1resnet50(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=70,
+        base_width=70 if fixed_params else 64,
         initialize=initialize,
     )
     model.name = "c1resnet50"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c1resnet50"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def d1resnet50(pretrained: bool = False, initialize: bool = True):
+def d1resnet50(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -167,19 +193,23 @@ def d1resnet50(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=50,
+        base_width=50 if fixed_params else 32,
         initialize=initialize,
     )
     model.name = "d1resnet50"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["d1resnet50"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def c4resnet50(pretrained: bool = False, initialize: bool = True):
+def c4resnet50(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -188,19 +218,23 @@ def c4resnet50(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=35,
+        base_width=35 if fixed_params else 16,
         initialize=initialize,
     )
     model.name = "c4resnet50"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c4resnet50"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def d4resnet50(pretrained: bool = False, initialize: bool = True):
+def d4resnet50(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -209,19 +243,23 @@ def d4resnet50(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=25,
+        base_width=25 if fixed_params else 8,
         initialize=initialize,
     )
     model.name = "d4resnet50"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["d4resnet50"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def c8resnet50(pretrained: bool = False, initialize: bool = True):
+def c8resnet50(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -230,19 +268,23 @@ def c8resnet50(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=1000,
-        base_width=25,
+        base_width=25 if fixed_params else 8,
         initialize=initialize,
     )
     model.name = "c8resnet50"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c8resnet50"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def c1resnet101(pretrained: bool = False, initialize: bool = True):
+def c1resnet101(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -251,19 +293,23 @@ def c1resnet101(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=70,
+        base_width=70 if fixed_params else 64,
         initialize=initialize,
     )
     model.name = "c1resnet101"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c1resnet101"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def d1resnet101(pretrained: bool = False, initialize: bool = True):
+def d1resnet101(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -272,19 +318,23 @@ def d1resnet101(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=50,
+        base_width=50 if fixed_params else 32,
         initialize=initialize,
     )
     model.name = "d1resnet101"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["d1resnet101"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def c4resnet101(pretrained: bool = False, initialize: bool = True):
+def c4resnet101(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -293,19 +343,23 @@ def c4resnet101(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=35,
+        base_width=35 if fixed_params else 16,
         initialize=initialize,
     )
     model.name = "c4resnet101"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c4resnet101"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def d4resnet101(pretrained: bool = False, initialize: bool = True):
+def d4resnet101(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -314,19 +368,23 @@ def d4resnet101(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=25,
+        base_width=25 if fixed_params else 8,
         initialize=initialize,
     )
     model.name = "d4resnet101"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["d4resnet101"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
 
 
-def c8resnet101(pretrained: bool = False, initialize: bool = True):
+def c8resnet101(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
     # if loading pretrained weights, can skip initialization
     initialize = False if pretrained else initialize
 
@@ -335,13 +393,15 @@ def c8resnet101(pretrained: bool = False, initialize: bool = True):
         block=E2BottleNeck,
         layers=[3, 4, 23, 3],
         num_classes=1000,
-        base_width=25,
+        base_width=25 if fixed_params else 8,
         initialize=initialize,
     )
     model.name = "c8resnet101"
+    if not fixed_params:
+        model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS["c8resnet101"])
+        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -352,7 +412,7 @@ def count_params(m: torch.nn.Module):
 
 
 def measure_inference(
-    model: torch.nn.Module, batch_size: int = 1, repetitions: int = 300
+    model: torch.nn.Module, batch_size: int = 1, repetitions: int = 100
 ):
     # https://deci.ai/blog/measure-inference-time-deep-neural-networks/
     dummy_input = torch.randn((batch_size, 3, 224, 224), dtype=torch.float32).cuda()
@@ -403,8 +463,14 @@ def get_model(model_name: str, **config):
 
 if __name__ == "__main__":
     for layers in [18, 50, 101]:
-        for group in ["", "c1", "d1", "c4", "d4", "c8"]:
-            model = eval(group + "resnet" + str(layers))(False).cuda().eval()
+        for group in ["", "d1", "c4", "d4", "c8"]:
+            model = (
+                eval(group + "resnet" + str(layers))(
+                    initialize=False, fixed_params=True
+                )
+                .cuda()
+                .eval()
+            )
             mem = torch.cuda.memory_allocated()
             inf_time = measure_inference(model, batch_size=32)
             print(

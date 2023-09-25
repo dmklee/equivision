@@ -95,6 +95,7 @@ class ClassifierModule(L.LightningModule):
     def __init__(
         self,
         model_name: str,
+        fast_model: bool = False,
         max_epochs: int = 90,
         lr: float = 0.1,
         lr_step_size: int = 30,
@@ -105,7 +106,7 @@ class ClassifierModule(L.LightningModule):
         super().__init__()
         self.save_hyperparameters()
 
-        self.model = get_model(model_name)
+        self.model = get_model(model_name, fixed_params=not fast_model)
         self.criterion = nn.CrossEntropyLoss()
         self.max_epochs = max_epochs
         self.lr = lr
@@ -207,6 +208,7 @@ def main(hparams):
 
     model = ClassifierModule(
         model_name=hparams.model,
+        fast_model=hparams.fast_model,
         max_epochs=hparams.max_epochs,
         lr=hparams.lr,
         lr_step_size=hparams.lr_step_size,
@@ -230,6 +232,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, default="./")
     parser.add_argument("--model", type=str, default="c1resnet18")
+    parser.add_argument("--fast_model", action="store_true")
     parser.add_argument("--devices", nargs="+", type=int, default=[0])
     parser.add_argument("--num_devices", type=int, default=None)
     parser.add_argument("--num_nodes", type=int, default=1)
