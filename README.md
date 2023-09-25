@@ -7,10 +7,10 @@ weights achieved by pretraining the network on ImageNet-1k.
 
 | Name          | Num. Params | Acc@1 | Acc@5 | Checkpoint |
 | ------------  |:--------:   | ----- | ----- | :----------: |
-| `d1resnet18`  |      11.5M  | 0.709 | 0.901 | [ckpt](https://github.com/dmklee/equivision/raw/main/checkpoints/d1resnet18.pt) |
-| `c4resnet18`  |      11.7M  | 0.734 | 0.915 | [ckpt](https://github.com/dmklee/equivision/raw/main/checkpoints/c4resnet18.pt) |
-| `d4resnet18`  |      11.7M  | 0.737 | 0.916 | [ckpt](https://github.com/dmklee/equivision/raw/main/checkpoints/d4resnet18.pt) |
-| `c8resnet18`  |      11.7M  | 0.738 | 0.914 | [ckpt](https://github.com/dmklee/equivision/raw/main/checkpoints/c8resnet18.pt) |
+| `d1resnet18`  |      11.5M  | 0.709 | 0.901 | [ckpt](https://drive.google.com/file/d/1LX9--04ZOTv28kZH2WIO8IhL8UI7Wi0f/view?usp=drive_link) |
+| `c4resnet18`  |      11.7M  | 0.734 | 0.915 | [ckpt](https://drive.google.com/file/d/1hO04WpgJHH_a0f2eYfClhwBm4SRnC9xM/view?usp=drive_link) |
+| `d4resnet18`  |      11.7M  | 0.737 | 0.916 | [ckpt](https://drive.google.com/file/d/19TsJP49g6O16eGihP35Cg5IPXGoNgVaW/view?usp=drive_link) |
+| `c8resnet18`  |      11.7M  | 0.738 | 0.914 | [ckpt](https://drive.google.com/file/d/1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN/view?usp=drive_link) |
 | `d1resnet50`  |      25.7M  | 0.769 | 0.935 |            |
 | `c4resnet50`  |      24.7M  | 0.785 | 0.943 |            |
 | `d4resnet50`  |      24.8M  |       |       |            |
