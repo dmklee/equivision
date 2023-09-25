@@ -5,7 +5,12 @@ from torch.hub import load_state_dict_from_url
 
 from equivision.e2resnet import E2BasicBlock, E2BottleNeck, E2ResNet
 
-URL_TEMPLATE = "https://github.com/dmklee/equivision/raw/main/checkpoints/{}"
+WEIGHT_URLS = {
+    "d1resnet18": "https://drive.google.com/file/d/1LX9--04ZOTv28kZH2WIO8IhL8UI7Wi0f/view?usp=drive_link",
+    "c4resnet18": "https://drive.google.com/file/d/1hO04WpgJHH_a0f2eYfClhwBm4SRnC9xM/view?usp=drive_link",
+    "d4resnet18": "https://drive.google.com/file/d/19TsJP49g6O16eGihP35Cg5IPXGoNgVaW/view?usp=drive_link",
+    "c8resnet18": "https://drive.google.com/file/d/1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN/view?usp=drive_link",
+}
 
 
 # pytorch versions, with same interface for easy loading during training
@@ -42,7 +47,7 @@ def c1resnet18(pretrained: bool = False, initialize: bool = True):
     model.name = "c1resnet18"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c1resnet18"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c1resnet18"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -63,7 +68,7 @@ def d1resnet18(pretrained: bool = False, initialize: bool = True):
     model.name = "d1resnet18"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("d1resnet18"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["d1resnet18"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -84,7 +89,7 @@ def c4resnet18(pretrained: bool = False, initialize: bool = True):
     model.name = "c4resnet18"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c4resnet18"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c4resnet18"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -105,7 +110,7 @@ def d4resnet18(pretrained: bool = False, initialize: bool = True):
     model.name = "d4resnet18"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("d4resnet18"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["d4resnet18"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -126,7 +131,7 @@ def c8resnet18(pretrained: bool = False, initialize: bool = True):
     model.name = "c8resnet18"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c8resnet18"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c8resnet18"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -147,7 +152,7 @@ def c1resnet50(pretrained: bool = False, initialize: bool = True):
     model.name = "c1resnet50"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c1resnet50"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c1resnet50"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -168,7 +173,7 @@ def d1resnet50(pretrained: bool = False, initialize: bool = True):
     model.name = "d1resnet50"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("d1resnet50"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["d1resnet50"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -189,7 +194,7 @@ def c4resnet50(pretrained: bool = False, initialize: bool = True):
     model.name = "c4resnet50"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c4resnet50"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c4resnet50"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -210,7 +215,7 @@ def d4resnet50(pretrained: bool = False, initialize: bool = True):
     model.name = "d4resnet50"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("d4resnet50"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["d4resnet50"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -231,7 +236,7 @@ def c8resnet50(pretrained: bool = False, initialize: bool = True):
     model.name = "c8resnet50"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c8resnet50"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c8resnet50"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -252,7 +257,7 @@ def c1resnet101(pretrained: bool = False, initialize: bool = True):
     model.name = "c1resnet101"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c1resnet101"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c1resnet101"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -273,7 +278,7 @@ def d1resnet101(pretrained: bool = False, initialize: bool = True):
     model.name = "d1resnet101"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("d1resnet101"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["d1resnet101"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -294,7 +299,7 @@ def c4resnet101(pretrained: bool = False, initialize: bool = True):
     model.name = "c4resnet101"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c4resnet101"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c4resnet101"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -315,7 +320,7 @@ def d4resnet101(pretrained: bool = False, initialize: bool = True):
     model.name = "d4resnet101"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("d4resnet101"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["d4resnet101"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -336,7 +341,7 @@ def c8resnet101(pretrained: bool = False, initialize: bool = True):
     model.name = "c8resnet101"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(URL_TEMPLATE.format("c8resnet101"))
+        state_dict = load_state_dict_from_url(WEIGHT_URLS["c8resnet101"])
         model.load_state_dict(state_dict, strict=False)
 
     return model
