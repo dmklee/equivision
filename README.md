@@ -44,7 +44,8 @@ Note that the model takes as input a `torch.Tensor`, not an `escnn.nn.GeometricT
 features.
 
 ## Training
-Install the required packages in the virtual environment of your choice:
+The following script will create a virtual environment with all necessary packages
+for training.
 ```bash
 ./setup.sh
 ```
