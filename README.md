@@ -1,7 +1,7 @@
 # Equivariant Vision Models
 This repository offers implementations of common vision models that are equivariant
 to rotations and reflections in the image plane.  For most models, we also offer
-weights achieved by pretraining the network on ImageNet-1k.
+weights achieved by pretraining the network on [ImageNet-1k](https://www.image-net.org/).
 
 ## List of Models
 
@@ -44,7 +44,7 @@ Note that the model takes as input a `torch.Tensor`, not an `escnn.nn.GeometricT
 features.
 
 ## Training
-The following script will create a virtual environment with all necessary packages
+The following command will create a virtual environment with all necessary packages
 for training.
 ```bash
 ./setup.sh
