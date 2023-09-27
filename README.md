@@ -11,14 +11,14 @@ weights achieved by pretraining the network on [ImageNet-1k](https://www.image-n
 | `c4resnet18`  |      11.7M  | 0.734 | 0.915 | [ckpt](https://drive.google.com/file/d/1hO04WpgJHH_a0f2eYfClhwBm4SRnC9xM/view?usp=drive_link) |
 | `d4resnet18`  |      11.7M  | 0.737 | 0.916 | [ckpt](https://drive.google.com/file/d/19TsJP49g6O16eGihP35Cg5IPXGoNgVaW/view?usp=drive_link) |
 | `c8resnet18`  |      11.7M  | 0.738 | 0.914 | [ckpt](https://drive.google.com/file/d/1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN/view?usp=drive_link) |
-| `d1resnet50`  |      25.7M  | 0.769 | 0.935 |            |
-| `c4resnet50`  |      24.7M  | 0.785 | 0.943 |            |
-| `d4resnet50`  |      24.8M  | 0.789 | 0.946 |            |
-| `c8resnet50`  |      24.8M  | 0.787 | 0.945 |            |
-| `d1resnet101` |      44.7M  | 0.785 | 0.937 |            |
-| `c4resnet101` |      43.4M  | 0.801 | 0.952 |            |
-| `d4resnet101` |      43.9M  |       |       |            |
-| `c8resnet101` |      43.9M  |       |       |            |
+| `d1resnet50`  |      25.7M  | 0.769 | 0.935 | [ckpt]() |
+| `c4resnet50`  |      24.7M  | 0.785 | 0.943 | [ckpt](https://drive.google.com/file/d/1NYTjon1zvghdGmpn4OkbB4xhIX5ixAxI/view?usp=drive_link) |
+| `d4resnet50`  |      24.8M  | 0.789 | 0.946 | [ckpt](https://drive.google.com/file/d/1Fr3JQqQFGaL_JjPelZ3gxGhUs5_o0lI8/view?usp=drive_link) |
+| `c8resnet50`  |      24.8M  | 0.787 | 0.945 |   |
+| `d1resnet101` |      44.7M  | 0.785 | 0.937 | [ckpt](https://drive.google.com/file/d/1iRRkAM3JgU0L61YO3LC3zGFFbK0F3f1I/view?usp=drive_link) |
+| `c4resnet101` |      43.4M  | 0.801 | 0.952 | [ckpt](https://drive.google.com/file/d/16N9H6ac_WWzC01wBDW06tTL0HWCTcVmW/view?usp=drive_link) |
+| `d4resnet101` |      43.9M  |       |       |   |
+| `c8resnet101` |      43.9M  |       |       |   |
 
 If you would like to suggest a new model or contribute an implementation,
 open an issue or PR.  We may be able to train the model for you.
