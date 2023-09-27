@@ -10,6 +10,11 @@ WEIGHT_URLS = {
     "c4resnet18": "https://drive.google.com/file/d/1hO04WpgJHH_a0f2eYfClhwBm4SRnC9xM/view?usp=drive_link",
     "d4resnet18": "https://drive.google.com/file/d/19TsJP49g6O16eGihP35Cg5IPXGoNgVaW/view?usp=drive_link",
     "c8resnet18": "https://drive.google.com/file/d/1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN/view?usp=drive_link",
+    "d1resnet50": "https://drive.google.com/file/d/1q6mep0tpIoiZFYWuSi1dPnVQ1Fd60OKn/view?usp=drive_link",
+    "c4resnet50": "https://drive.google.com/file/d/1NYTjon1zvghdGmpn4OkbB4xhIX5ixAxI/view?usp=drive_link",
+    "d4resnet50": "https://drive.google.com/file/d/1Fr3JQqQFGaL_JjPelZ3gxGhUs5_o0lI8/view?usp=drive_link",
+    "d1resnet101": "https://drive.google.com/file/d/1iRRkAM3JgU0L61YO3LC3zGFFbK0F3f1I/view?usp=drive_link",
+    "c4resnet101": "https://drive.google.com/file/d/16N9H6ac_WWzC01wBDW06tTL0HWCTcVmW/view?usp=drive_link",
 }
 
 
@@ -466,7 +471,7 @@ if __name__ == "__main__":
         for group in ["", "d1", "c4", "d4", "c8"]:
             model = (
                 eval(group + "resnet" + str(layers))(
-                    initialize=False, fixed_params=True
+                    initialize=False, fixed_params=False
                 )
                 .cuda()
                 .eval()
