@@ -13,10 +13,10 @@ weights achieved by pretraining the network on [ImageNet-1k](https://www.image-n
 | `c8resnet18`  |      11.7M  | 0.738 | 0.914 | [ckpt](https://drive.google.com/file/d/1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN/view?usp=drive_link) |
 | `d1resnet50`  |      25.7M  | 0.769 | 0.935 |            |
 | `c4resnet50`  |      24.7M  | 0.785 | 0.943 |            |
-| `d4resnet50`  |      24.8M  |       |       |            |
-| `c8resnet50`  |      24.8M  |       |       |            |
-| `d1resnet101` |      44.7M  |       |       |            |
-| `c4resnet101` |      43.4M  |       |       |            |
+| `d4resnet50`  |      24.8M  | 0.789 | 0.946 |            |
+| `c8resnet50`  |      24.8M  | 0.787 | 0.945 |            |
+| `d1resnet101` |      44.7M  | 0.785 | 0.937 |            |
+| `c4resnet101` |      43.4M  | 0.801 | 0.952 |            |
 | `d4resnet101` |      43.9M  |       |       |            |
 | `c8resnet101` |      43.9M  |       |       |            |
 
