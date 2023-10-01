@@ -13,8 +13,10 @@ WEIGHT_URLS = {
     "d1resnet50": "https://drive.google.com/file/d/1q6mep0tpIoiZFYWuSi1dPnVQ1Fd60OKn/view?usp=drive_link",
     "c4resnet50": "https://drive.google.com/file/d/1NYTjon1zvghdGmpn4OkbB4xhIX5ixAxI/view?usp=drive_link",
     "d4resnet50": "https://drive.google.com/file/d/1Fr3JQqQFGaL_JjPelZ3gxGhUs5_o0lI8/view?usp=drive_link",
+    "c8resnet50": "https://drive.google.com/file/d/13Et3SvIoxRFEy9N8t61O6EeAeameKzLX/view?usp=drive_link",
     "d1resnet101": "https://drive.google.com/file/d/1iRRkAM3JgU0L61YO3LC3zGFFbK0F3f1I/view?usp=drive_link",
     "c4resnet101": "https://drive.google.com/file/d/16N9H6ac_WWzC01wBDW06tTL0HWCTcVmW/view?usp=drive_link",
+    "d4resnet101": "https://drive.google.com/file/d/1qmkLJV87lVKFnPdZMEsYoe2rrjpI96PM/view?usp=drive_link",
 }
 
 
