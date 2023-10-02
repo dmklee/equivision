@@ -1,23 +1,43 @@
+import os
+from typing import Any, Dict, Optional
+
+import requests
 import torch
+import torch.hub
 import torchvision.models
 from escnn import gspaces
-from torch.hub import load_state_dict_from_url
+from torchvision.datasets.utils import download_file_from_google_drive
 
 from equivision.e2resnet import E2BasicBlock, E2BottleNeck, E2ResNet
 
-WEIGHT_URLS = {
-    "d1resnet18": "https://drive.google.com/file/d/1LX9--04ZOTv28kZH2WIO8IhL8UI7Wi0f/view?usp=drive_link",
-    "c4resnet18": "https://drive.google.com/file/d/1hO04WpgJHH_a0f2eYfClhwBm4SRnC9xM/view?usp=drive_link",
-    "d4resnet18": "https://drive.google.com/file/d/19TsJP49g6O16eGihP35Cg5IPXGoNgVaW/view?usp=drive_link",
-    "c8resnet18": "https://drive.google.com/file/d/1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN/view?usp=drive_link",
-    "d1resnet50": "https://drive.google.com/file/d/1q6mep0tpIoiZFYWuSi1dPnVQ1Fd60OKn/view?usp=drive_link",
-    "c4resnet50": "https://drive.google.com/file/d/1NYTjon1zvghdGmpn4OkbB4xhIX5ixAxI/view?usp=drive_link",
-    "d4resnet50": "https://drive.google.com/file/d/1Fr3JQqQFGaL_JjPelZ3gxGhUs5_o0lI8/view?usp=drive_link",
-    "c8resnet50": "https://drive.google.com/file/d/13Et3SvIoxRFEy9N8t61O6EeAeameKzLX/view?usp=drive_link",
-    "d1resnet101": "https://drive.google.com/file/d/1iRRkAM3JgU0L61YO3LC3zGFFbK0F3f1I/view?usp=drive_link",
-    "c4resnet101": "https://drive.google.com/file/d/16N9H6ac_WWzC01wBDW06tTL0HWCTcVmW/view?usp=drive_link",
-    "d4resnet101": "https://drive.google.com/file/d/1qmkLJV87lVKFnPdZMEsYoe2rrjpI96PM/view?usp=drive_link",
+WEIGHT_FILE_IDS = {
+    "d1resnet18": "1LX9--04ZOTv28kZH2WIO8IhL8UI7Wi0f",
+    "c4resnet18": "1hO04WpgJHH_a0f2eYfClhwBm4SRnC9xM",
+    "d4resnet18": "19TsJP49g6O16eGihP35Cg5IPXGoNgVaW",
+    "c8resnet18": "1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN",
+    "d1resnet50": "1q6mep0tpIoiZFYWuSi1dPnVQ1Fd60OKn",
+    "c4resnet50": "1NYTjon1zvghdGmpn4OkbB4xhIX5ixAxI",
+    "d4resnet50": "1Fr3JQqQFGaL_JjPelZ3gxGhUs5_o0lI8",
+    "c8resnet50": "13Et3SvIoxRFEy9N8t61O6EeAeameKzLX",
+    "d1resnet101": "1iRRkAM3JgU0L61YO3LC3zGFFbK0F3f1I",
+    "c4resnet101": "16N9H6ac_WWzC01wBDW06tTL0HWCTcVmW",
+    "d4resnet101": "1qmkLJV87lVKFnPdZMEsYoe2rrjpI96PM",
 }
+
+
+def load_state_dict_from_google_drive(
+    file_id: str, model_dir: Optional[str] = None
+) -> Dict[str, Any]:
+    # based off https://pytorch.org/docs/stable/_modules/torch/hub.html#load_state_dict_from_url
+    hub_dir = torch.hub.get_dir()
+    model_dir = os.path.join(hub_dir, "checkpoints")
+    os.makedirs(model_dir, exist_ok=True)
+
+    cached_file = os.path.join(model_dir, file_id)
+    if not os.path.exists(cached_file):
+        download_file_from_google_drive(file_id, root=model_dir)
+
+    return torch.load(cached_file)
 
 
 # pytorch versions, with same interface for easy loading during training
@@ -58,7 +78,7 @@ def c1resnet18(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -83,7 +103,7 @@ def d1resnet18(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -108,7 +128,7 @@ def c4resnet18(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -133,7 +153,7 @@ def d4resnet18(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -158,7 +178,7 @@ def c8resnet18(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -183,7 +203,7 @@ def c1resnet50(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -208,7 +228,7 @@ def d1resnet50(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -233,7 +253,7 @@ def c4resnet50(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -258,7 +278,7 @@ def d4resnet50(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -283,7 +303,7 @@ def c8resnet50(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -308,7 +328,7 @@ def c1resnet101(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -333,7 +353,7 @@ def d1resnet101(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -358,7 +378,7 @@ def c4resnet101(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -383,7 +403,7 @@ def d4resnet101(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model
@@ -408,7 +428,7 @@ def c8resnet101(
         model.name += "-fast"
 
     if pretrained:
-        state_dict = load_state_dict_from_url(WEIGHT_URLS[model.name])
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
         model.load_state_dict(state_dict, strict=False)
 
     return model

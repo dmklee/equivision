@@ -23,6 +23,16 @@ weights achieved by pretraining the network on [ImageNet-1k](https://www.image-n
 If you would like to suggest a new model or contribute an implementation,
 open an issue or PR.  We may be able to train the model for you.
 
+## Installation
+After downloading the repository, you can install the necessary packages for
+using the models with:
+```
+pip install -r requirements.txt
+```
+Alternatively, you can install the package with PyPI:
+```
+pip install git+https://github.com/dmklee/equivision
+```
 
 ## Usage
 Below is a code snippet that illustrates how to load a pretrained model and
