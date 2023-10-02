@@ -1,3 +1,10 @@
+"""Implements ResNet that is equivariant to discrete rotations
+and reflections in the 2D plane.  This implementation is based
+off of the equivariant wide ResNet from:
+    https://github.com/QUVA-Lab/escnn/blob/master/examples/e2wrn.py
+and the PyTorch implementation of ResNet from:
+    https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py
+"""
 from typing import Callable, List, Optional, Type, Union
 
 import torch
@@ -14,7 +21,8 @@ def conv7x7(
     dilation: int = 1,
     bias: bool = False,
     initialize: bool = True,
-):
+) -> nn.EquivariantModule:
+    """7x7 group convolution with padding"""
     return nn.R2Conv(
         in_type,
         out_type,
@@ -35,7 +43,8 @@ def conv3x3(
     dilation: int = 1,
     bias: bool = False,
     initialize: bool = True,
-):
+) -> nn.EquivariantModule:
+    """3x3 group convolution with padding"""
     return nn.R2Conv(
         in_type,
         out_type,
@@ -56,7 +65,8 @@ def conv1x1(
     dilation: int = 1,
     bias: bool = False,
     initialize: bool = True,
-):
+) -> nn.EquivariantModule:
+    """1x1 group convolution"""
     return nn.R2Conv(
         in_type,
         out_type,
@@ -266,6 +276,7 @@ class E2ResNet(torch.nn.Module):
         return torch.nn.Sequential(*layers)
 
     def forward_features(self, x: Tensor) -> GeometricTensor:
+        """Returns feature map containing regular representation"""
         x = GeometricTensor(x, self.in_type)
         x = self.conv1(x)
         x = self.bn1(x)
@@ -280,6 +291,7 @@ class E2ResNet(torch.nn.Module):
         return x
 
     def forward(self, x: Tensor) -> Tensor:
+        """Returns logits"""
         x = self.forward_features(x)
 
         x = self.avgpool(x)
