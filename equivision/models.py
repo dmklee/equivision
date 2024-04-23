@@ -1,12 +1,12 @@
 import os
 from typing import Any, Dict, Optional
 
+import gdown
 import requests
 import torch
 import torch.hub
 import torchvision.models
 from escnn import gspaces
-from torchvision.datasets.utils import download_file_from_google_drive
 
 from equivision.e2resnet import E2BasicBlock, E2BottleNeck, E2ResNet
 
@@ -15,6 +15,7 @@ WEIGHT_FILE_IDS = {
     "c4resnet18": "1hO04WpgJHH_a0f2eYfClhwBm4SRnC9xM",
     "d4resnet18": "19TsJP49g6O16eGihP35Cg5IPXGoNgVaW",
     "c8resnet18": "1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN",
+    "d8resnet18": "1s3bYI4U-RWw6IYxPyqqmQWZ_SvaSRVBV",
     "d1resnet50": "1q6mep0tpIoiZFYWuSi1dPnVQ1Fd60OKn",
     "c4resnet50": "1NYTjon1zvghdGmpn4OkbB4xhIX5ixAxI",
     "d4resnet50": "1Fr3JQqQFGaL_JjPelZ3gxGhUs5_o0lI8",
@@ -34,8 +35,10 @@ def load_state_dict_from_google_drive(
     os.makedirs(model_dir, exist_ok=True)
 
     cached_file = os.path.join(model_dir, file_id)
+
     if not os.path.exists(cached_file):
-        download_file_from_google_drive(file_id, root=model_dir)
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, cached_file)
 
     return torch.load(cached_file)
 
@@ -174,6 +177,31 @@ def c8resnet18(
         initialize=initialize,
     )
     model.name = "c8resnet18"
+    if not fixed_params:
+        model.name += "-fast"
+
+    if pretrained:
+        state_dict = load_state_dict_from_google_drive(WEIGHT_FILE_IDS[model.name])
+        model.load_state_dict(state_dict, strict=False)
+
+    return model
+
+
+def d8resnet18(
+    pretrained: bool = False, initialize: bool = True, fixed_params: bool = True
+):
+    # if loading pretrained weights, can skip initialization
+    initialize = False if pretrained else initialize
+
+    model = E2ResNet(
+        gspace=gspaces.flipRot2dOnR2(N=8),
+        block=E2BasicBlock,
+        layers=[2, 2, 2, 2],
+        num_classes=1000,
+        base_width=20 if fixed_params else 3,
+        initialize=initialize,
+    )
+    model.name = "d8resnet18"
     if not fixed_params:
         model.name += "-fast"
 
@@ -434,6 +462,20 @@ def c8resnet101(
     return model
 
 
+def c4vits(*args, **kwargs):
+    from e2attn.vision_transformer import VisionTransformer
+
+    model = VisionTransformer(
+        gspace=gspaces.rot2dOnR2(N=4),
+        num_classes=1000,
+        embed_dim=256,
+        depth=4,
+        mlp_ratio=2.0,
+    )
+    model.name = "c4vits"
+    return model
+
+
 def count_params(m: torch.nn.Module):
     return sum(p.numel() for p in m.parameters() if p.requires_grad)
 
@@ -489,19 +531,29 @@ def get_model(model_name: str, **config):
 
 
 if __name__ == "__main__":
-    for layers in [18, 50, 101]:
-        for group in ["", "d1", "c4", "d4", "c8"]:
-            model = (
-                eval(group + "resnet" + str(layers))(
-                    initialize=False, fixed_params=False
-                )
-                .cuda()
-                .eval()
-            )
-            mem = torch.cuda.memory_allocated()
-            inf_time = measure_inference(model, batch_size=32)
-            print(
-                f"{model.name}: {count_params(model)*1e-6:.1f}M |"
-                f" {inf_time:.1f}ms | {mem * 1e-9:.2f}Gb"
-            )
-        print()
+    model = d8resnet18(pretrained=True).cuda().eval()
+
+    # model = resnet18(initialize=False, fixed_params=False).cuda()#.eval()
+    mem = torch.cuda.memory_allocated()
+    inf_time = measure_inference(model, batch_size=32)
+    print(
+        f"{model.name}: {count_params(model)*1e-6:.1f}M |"
+        f" {inf_time:.1f}ms | {mem * 1e-9:.2f}Gb"
+    )
+    exit()
+    # for layers in [18, 50, 101]:
+    # for group in ["", "d1", "c4", "d4", "c8"]:
+    # model = (
+    # eval(group + "resnet" + str(layers))(
+    # initialize=False, fixed_params=False
+    # )
+    # .cuda()
+    # .eval()
+    # )
+    # mem = torch.cuda.memory_allocated()
+    # inf_time = measure_inference(model, batch_size=32)
+    # print(
+    # f"{model.name}: {count_params(model)*1e-6:.1f}M |"
+    # f" {inf_time:.1f}ms | {mem * 1e-9:.2f}Gb"
+    # )
+    # print()
