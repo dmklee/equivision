@@ -11,6 +11,7 @@ weights achieved by pretraining the network on [ImageNet-1k](https://www.image-n
 | `c4resnet18`  |      11.7M  | 0.734 | 0.915 | [ckpt](https://drive.google.com/file/d/1hO04WpgJHH_a0f2eYfClhwBm4SRnC9xM/view?usp=drive_link) |
 | `d4resnet18`  |      11.7M  | 0.737 | 0.916 | [ckpt](https://drive.google.com/file/d/19TsJP49g6O16eGihP35Cg5IPXGoNgVaW/view?usp=drive_link) |
 | `c8resnet18`  |      11.7M  | 0.738 | 0.914 | [ckpt](https://drive.google.com/file/d/1i4uboCtvyYkhWOqwOAg2A57jb-D8-xCN/view?usp=drive_link) |
+| `d8resnet18`  |      11.9M  | 0.736 | 0.915 | [ckpt](https://drive.google.com/file/d/1s3bYI4U-RWw6IYxPyqqmQWZ_SvaSRVBV/view?usp=drive_link) |
 | `d1resnet50`  |      25.7M  | 0.769 | 0.935 | [ckpt](https://drive.google.com/file/d/1q6mep0tpIoiZFYWuSi1dPnVQ1Fd60OKn/view?usp=drive_link) |
 | `c4resnet50`  |      24.7M  | 0.785 | 0.943 | [ckpt](https://drive.google.com/file/d/1NYTjon1zvghdGmpn4OkbB4xhIX5ixAxI/view?usp=drive_link) |
 | `d4resnet50`  |      24.8M  | 0.789 | 0.946 | [ckpt](https://drive.google.com/file/d/1Fr3JQqQFGaL_JjPelZ3gxGhUs5_o0lI8/view?usp=drive_link) |
